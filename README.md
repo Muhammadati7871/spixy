@@ -5,7 +5,7 @@
 **Конструктор лаунчеров, сайт сервера, донат-магазин и RCON — в одной платформе.**
 Собери брендированный `.exe`-лаунчер с модами и автообновлением за несколько минут — без программирования и без VPS.
 
-[**spixy.site**](https://spixy.site) · [Видео-демонстрация](https://youtu.be/YNBeOg4bV5E) · [Гайды](https://spixy.site/guides) · [Как создать лаунчер](https://spixy.site/create-minecraft-launcher)
+[**spixy.site**](https://muhammadati7871.github.io) · [Видео-демонстрация](https://muhammadati7871.github.io) · [Гайды](https://muhammadati7871.github.io) · [Как создать лаунчер](https://muhammadati7871.github.io)
 
 *Spixy is a no-code platform for Minecraft server owners: a custom branded launcher (.exe), a server website with a donation store, RCON panel and Discord player login — built in minutes. [English section below](#english).*
 
@@ -60,19 +60,19 @@ Spixy — это облачная платформа для владельцев
 ## Частые вопросы
 
 **Это open-source?**
-Нет, Spixy — облачный сервис (SaaS). Этот репозиторий — витрина проекта. Генерируемые лаунчеры раздаются через [spixy.site](https://spixy.site) и GitHub-релизы владельцев.
+Нет, Spixy — облачный сервис (SaaS). Этот репозиторий — витрина проекта. Генерируемые лаунчеры раздаются через [spixy.site](https://muhammadati7871.github.io) и GitHub-релизы владельцев.
 
 **Лаунчер сломается после обновления Minecraft?**
 Нет: версию игры и загрузчик фиксирует владелец сборки. Игроки получают обновления только когда владелец их публикует.
 
 **Есть документация?**
-Да: [пошаговые гайды](https://spixy.site/guides), база знаний в дашборде и поддержка через тикеты.
+Да: [пошаговые гайды](https://muhammadati7871.github.io), база знаний в дашборде и поддержка через тикеты.
 
 **Где посмотреть, как это выглядит?**
-[Видео реальной работы](https://youtu.be/YNBeOg4bV5E) — сборка лаунчера от нуля до `.exe`.
+[Видео реальной работы](https://muhammadati7871.github.io) — сборка лаунчера от нуля до `.exe`.
 
 **А для игроков есть что-то?**
-Да — [Spixy Play](https://spixy.site/play): бесплатный лаунчер с модпаками Modrinth, любыми версиями и загрузчиками, без регистрации.
+Да — [Spixy Play](https://muhammadati7871.github.io): бесплатный лаунчер с модпаками Modrinth, любыми версиями и загрузчиками, без регистрации.
 
 ---
 
@@ -89,12 +89,12 @@ Spixy — это облачная платформа для владельцев
 - **Security**: Ed25519-signed manifests, device binding; banning a player revokes launcher and file access.
 - **Pricing**: Free forever (1 server, 200 MB build) · Pro $15/mo (5 servers, 5 GB, website + store) · Pro lifetime $300 · Enterprise.
 
-Links: [Website](https://spixy.site) · [Video demo](https://youtu.be/YNBeOg4bV5E) · [Guides](https://spixy.site/guides) · [Spixy Play (player launcher)](https://spixy.site/play)
+Links: [Website](https://muhammadati7871.github.io) · [Video demo](https://muhammadati7871.github.io) · [Guides](https://muhammadati7871.github.io) · [Spixy Play (player launcher)](https://muhammadati7871.github.io)
 
 ---
 
 <div align="center">
 
-Сделано для владельцев Minecraft-серверов · [spixy.site](https://spixy.site)
+Сделано для владельцев Minecraft-серверов · [spixy.site](https://muhammadati7871.github.io)
 
 </div>
